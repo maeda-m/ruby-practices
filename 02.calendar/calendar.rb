@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-require 'date'
-require 'debug'
+require_relative 'date_patch'
 
 class Calendar
-  CELL_WIDTH = 3
-  ROW_WIDTH = CELL_WIDTH * 7
+  ROW_WIDTH = 21
 
   attr_accessor :year, :month, :beginning_of_day, :end_of_day
 
@@ -14,6 +12,7 @@ class Calendar
 
     @year = year || today.year
     @month = month || today.month
+
     Date.new(@year, @month)
   rescue Date::Error
     @year = today.year
@@ -38,31 +37,23 @@ class Calendar
   end
 
   def details(start_day = :sunday)
+    beginning_of_week = beginning_of_day.beginning_of_week(start_day)
+    end_of_week = end_of_day.end_of_week(start_day)
+
+    all_day = (beginning_of_week..end_of_week)
+    days_in_month = (beginning_of_day..end_of_day)
+
     weeks = []
-    days = []
+    5.times do |i|
+      days_in_week = all_day.to_a.slice(i * 7, 7)
+      break if days_in_week.nil?
 
-    target_days = (beginning_of_day..end_of_day)
-    (beginning_of_week(beginning_of_day, start_day)..end_of_week(end_of_day, start_day)).each_with_index do |date, i|
-      if !i.zero? && date.send("#{start_day}?")
-        weeks << days
-        days = []
+      weeks << days_in_week.map do |date|
+        day = days_in_month.include?(date) ? date.day : nil
+        day.to_s.rjust(2)
       end
-
-      day = target_days.include?(date) ? date.day : nil
-      days << day.to_s.rjust(2)
     end
-    weeks << days
 
     weeks.map { |d| d.join(' ').ljust(ROW_WIDTH) }.join("\n")
-  end
-
-  def beginning_of_week(date, start_day = :sunday)
-    return date if date.send("#{start_day}?")
-
-    beginning_of_week(date.prev_day, start_day)
-  end
-
-  def end_of_week(date, start_day = :sunday)
-    beginning_of_week(date, start_day).next_day(6)
   end
 end
