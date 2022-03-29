@@ -24,6 +24,8 @@
 
 ### 初期化
 
+#### Game
+
 ```mermaid
 flowchart LR
   subgraph Game
@@ -40,10 +42,14 @@ flowchart LR
     g-z((End))
 
     g-a --> g-pin-records --> g-initialize --> g-new-frame-start --> g-frame-num
-    g-frame-num --> f-a
-    f-z --> g-frame-add --> g-new-frame-finish --> g-z
+    g-frame-num --> frame((Frame)) --> g-frame-add --> g-new-frame-finish --> g-z
   end
+```
 
+#### Frame
+
+```mermaid
+flowchart LR
   subgraph Frame
     f-a((Start))
     f-initialize[初期化処理]
@@ -61,10 +67,14 @@ flowchart LR
     f-a --> f-initialize --> f-frame-num-judge
     f-frame-num-judge -- Yes --> f-max-bowl-3 --> f-new-bowl-start
     f-frame-num-judge -- No --> f-max-bowl-2 --> f-new-bowl-start
-    f-new-bowl-start --> f-bowl-num --> b-a
-    b-z --> f-bowl-add --> f-new-bowl-finish --> f-z
+    f-new-bowl-start --> f-bowl-num --> bowl((Bowl)) --> f-bowl-add --> f-new-bowl-finish --> f-z
   end
+```
 
+#### Bowl
+
+```mermaid
+flowchart LR
   subgraph Bowl
     b-a((Start))
     b-initialize[初期化処理]
@@ -108,13 +118,10 @@ flowchart LR
 
 ### スコア集計（加算）
 
+#### Frame
+
 ```mermaid
 flowchart LR
-  subgraph Game
-    g-a((Start)) --> f-a((Start))
-    f-z((End)) --> g-z((End))
-  end
-
   subgraph Frame
     f-score-judge-first-bowl-is-strike{前フレームの<br>1投目がストライクか}
     f-score-judge-second-bowl-is-spare{前フレームの<br>2投目がスペアか}
