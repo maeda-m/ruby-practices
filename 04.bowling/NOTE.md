@@ -9,7 +9,7 @@
 - 1ゲーム＜Game＞は10フレーム＜Frame＞
   - 1ゲームの得点＜score＞は最大で300
   - 1フレームの得点は最大で30
-- 1フレームは原則2投＜Bowl＞
+- 1フレームは原則2投＜Shot＞
   - 10フレーム目に限り、マーク（ストライクまたはスペアのことで、具体的には下記参照）場合のみ3投できる
     - 1投目がストライクだった場合
     - 2投目がスペアだった場合
@@ -54,64 +54,64 @@ flowchart LR
     f-a((Start))
     f-initialize[初期化処理]
     f-frame-num-judge{10フレーム目か}
-    f-max-bowl-2[/最大投球数は2/]
-    f-max-bowl-3[/最大投球数は3/]
+    f-max-shot-2[/最大投球数は2/]
+    f-max-shot-3[/最大投球数は3/]
 
-    f-new-bowl-start[/Bowlオブジェクトを作成する\]
-    f-bowl-num[/投球No/]
-    f-bowl-add[Bowlオブジェクトを格納する]
-    f-new-bowl-finish[\最大投球数まで繰り返す/]
+    f-new-shot-start[/Shotオブジェクトを作成する\]
+    f-shot-num[/投球No/]
+    f-shot-add[Shotオブジェクトを格納する]
+    f-new-shot-finish[\最大投球数まで繰り返す/]
 
     f-z((End))
 
     f-a --> f-initialize --> f-frame-num-judge
-    f-frame-num-judge -- Yes --> f-max-bowl-3 --> f-new-bowl-start
-    f-frame-num-judge -- No --> f-max-bowl-2 --> f-new-bowl-start
-    f-new-bowl-start --> f-bowl-num --> bowl((Bowl)) --> f-bowl-add --> f-new-bowl-finish --> f-z
+    f-frame-num-judge -- Yes --> f-max-shot-3 --> f-new-shot-start
+    f-frame-num-judge -- No --> f-max-shot-2 --> f-new-shot-start
+    f-new-shot-start --> f-shot-num --> shot((Shot)) --> f-shot-add --> f-new-shot-finish --> f-z
   end
 ```
 
-#### Bowl
+#### Shot
 
 ```mermaid
 flowchart LR
-  subgraph Bowl
+  subgraph Shot
     b-a((Start))
     b-initialize[初期化処理]
 
-    b-bowl-exclude-judge-first-bowl{1投目か}
-    b-bowl-exclude-judge-second-bowl{2投目か}
-    b-bowl-exclude-judge-third-bowl{3投目か}
+    b-shot-exclude-judge-first-shot{1投目か}
+    b-shot-exclude-judge-second-shot{2投目か}
+    b-shot-exclude-judge-third-shot{3投目か}
 
-    b-bowl-exclude-judge-frame-num{10フレーム目か}
-    b-bowl-exclude-judge-first-bowl-is-strike{同フレームの<br>1投目がストライクか}
+    b-shot-exclude-judge-frame-num{10フレーム目か}
+    b-shot-exclude-judge-first-shot-is-strike{同フレームの<br>1投目がストライクか}
 
-    b-bowl-exclude-judge-bowl-is-marked{同フレームの<br>1投目がストライクか<br>または<br>2投目がスペアか}
+    b-shot-exclude-judge-shot-is-marked{同フレームの<br>1投目がストライクか<br>または<br>2投目がスペアか}
 
     b-bolw-excluded-false[/有効な投球/]
     b-bolw-excluded-true[/除外される投球/]
 
     b-z((End))
 
-    b-a --> b-initialize --> b-bowl-exclude-judge-first-bowl -- Yes --> b-bolw-excluded-false
-    b-bowl-exclude-judge-first-bowl -- No --> b-bowl-exclude-judge-second-bowl
+    b-a --> b-initialize --> b-shot-exclude-judge-first-shot -- Yes --> b-bolw-excluded-false
+    b-shot-exclude-judge-first-shot -- No --> b-shot-exclude-judge-second-shot
 
-    b-bowl-exclude-judge-second-bowl -- Yes --> b-bowl-exclude-judge-first-bowl-is-strike
-    b-bowl-exclude-judge-second-bowl -- No --> b-bowl-exclude-judge-third-bowl
+    b-shot-exclude-judge-second-shot -- Yes --> b-shot-exclude-judge-first-shot-is-strike
+    b-shot-exclude-judge-second-shot -- No --> b-shot-exclude-judge-third-shot
 
-    b-bowl-exclude-judge-first-bowl-is-strike -- Yes --> b-bowl-exclude-judge-frame-num
-    b-bowl-exclude-judge-first-bowl-is-strike -- No --> b-bolw-excluded-false
+    b-shot-exclude-judge-first-shot-is-strike -- Yes --> b-shot-exclude-judge-frame-num
+    b-shot-exclude-judge-first-shot-is-strike -- No --> b-bolw-excluded-false
 
-    b-bowl-exclude-judge-frame-num --Yes --> b-bowl-exclude-judge-bowl-is-marked
-    b-bowl-exclude-judge-frame-num --No --> b-bolw-excluded-true
+    b-shot-exclude-judge-frame-num --Yes --> b-shot-exclude-judge-shot-is-marked
+    b-shot-exclude-judge-frame-num --No --> b-bolw-excluded-true
 
-    b-bowl-exclude-judge-bowl-is-marked -- Yes --> b-bolw-excluded-false
-    b-bowl-exclude-judge-bowl-is-marked -- No --> b-bolw-excluded-true
+    b-shot-exclude-judge-shot-is-marked -- Yes --> b-bolw-excluded-false
+    b-shot-exclude-judge-shot-is-marked -- No --> b-bolw-excluded-true
 
-    b-bowl-exclude-judge-third-bowl -- Yes --> b-bowl-exclude-judge-frame-num
-    b-bowl-exclude-judge-third-bowl -- No --> b-bolw-excluded-true
+    b-shot-exclude-judge-third-shot -- Yes --> b-shot-exclude-judge-frame-num
+    b-shot-exclude-judge-third-shot -- No --> b-bolw-excluded-true
 
-    b-bolw-excluded-false --> b-z
+    b-bolw-excluded-false --> b-z((End))
     b-bolw-excluded-true --> b-z
   end
 ```
@@ -123,14 +123,14 @@ flowchart LR
 ```mermaid
 flowchart LR
   subgraph Frame
-    f-score-judge-first-bowl-is-strike{前フレームの<br>1投目がストライクか}
-    f-score-judge-second-bowl-is-spare{前フレームの<br>2投目がスペアか}
+    f-score-judge-first-shot-is-strike{同フレームの<br>1投目がストライクか}
+    f-score-judge-second-shot-is-spare{同フレームの<br>2投目がスペアか}
 
-    f-a --> f-score-judge-first-bowl-is-strike
-    f-score-judge-first-bowl-is-strike -- Yes --> f-increment-score-to-before-frame-p1[前フレームの得点に<br>直近で有効な2投の点を加算する] --> f-z
-    f-score-judge-first-bowl-is-strike -- No --> f-score-judge-second-bowl-is-spare
+    f-a((Start)) --> f-score-judge-first-shot-is-strike
+    f-score-judge-first-shot-is-strike -- Yes --> f-increment-score-to-before-frame-p1[同フレームの得点に<br>次フレーム以降の<br>有効な2投の点を加算する] --> f-z((End))
+    f-score-judge-first-shot-is-strike -- No --> f-score-judge-second-shot-is-spare
 
-    f-score-judge-second-bowl-is-spare -- Yes --> f-increment-score-to-before-frame-p2[前フレームの得点に<br>直近で有効な1投の点を加算する] --> f-z
-    f-score-judge-second-bowl-is-spare -- No --> f-increment-score-to-before-frame-p3[加算なし] --> f-z
+    f-score-judge-second-shot-is-spare -- Yes --> f-increment-score-to-before-frame-p2[同フレームの得点に<br>次フレーム以降の<br>有効な1投の点を加算する] --> f-z
+    f-score-judge-second-shot-is-spare -- No --> f-increment-score-to-before-frame-p3[加算なし] --> f-z
   end
 ```
