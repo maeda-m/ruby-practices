@@ -34,6 +34,16 @@ describe Bowling::Game do
     game = Bowling::Game.parse('X,X,X,X,X,X,X,X,X,X,X,X')
     assert_equal 300, game.score
   end
+
+  it 'スコアは 0 であること' do
+    game = Bowling::Game.parse('0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')
+    assert_equal 0, game.score
+  end
+
+  it 'スコアは 110 であること' do
+    game = Bowling::Game.parse('1,9,2,8,3,7,4,6,5,5,6,4,7,3,8,2,9,1,0,10,0')
+    assert_equal 144, game.score
+  end
 end
 
 describe Bowling::Frame do
@@ -144,6 +154,53 @@ describe Bowling::Frame do
       game.add_frame(first_frame)
 
       assert_equal 10, game.score
+    end
+  end
+
+  describe '2フレーム目がストライクの場合' do
+    describe '3フレーム目がオープンフレームの場合' do
+      it 'スコアは 36 であること' do
+        first_frame = Bowling::Frame.new(1)
+        first_frame.add_shot(5)
+        first_frame.add_shot(5)
+
+        second_frame = Bowling::Frame.new(2)
+        second_frame.add_strike_shot
+
+        third_frame = Bowling::Frame.new(3)
+        third_frame.add_shot(2)
+        third_frame.add_shot(1)
+
+        game.add_frame(first_frame)
+        game.add_frame(second_frame)
+        game.add_frame(third_frame)
+
+        assert_equal 36, game.score
+      end
+    end
+  end
+
+  describe '2フレーム目がスペアの場合' do
+    describe '3フレーム目がオープンフレームの場合' do
+      it 'スコアは 34 であること' do
+        first_frame = Bowling::Frame.new(1)
+        first_frame.add_shot(5)
+        first_frame.add_shot(5)
+
+        second_frame = Bowling::Frame.new(2)
+        second_frame.add_shot(6)
+        second_frame.add_shot(4)
+
+        third_frame = Bowling::Frame.new(3)
+        third_frame.add_shot(3)
+        third_frame.add_shot(2)
+
+        game.add_frame(first_frame)
+        game.add_frame(second_frame)
+        game.add_frame(third_frame)
+
+        assert_equal 34, game.score
+      end
     end
   end
 end
