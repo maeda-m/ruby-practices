@@ -57,4 +57,17 @@ describe Calendar do
                    '24 25 26 27 28 29 30 ', cal.dates
     end
   end
+
+  describe '4週表記' do
+    it '2009年02月のカレンダーが表示できること' do
+      cal = Calendar.new(2009, 2)
+
+      assert_equal '      02月 2009       ', cal.title
+      assert_equal '日 月 火 水 木 金 土', cal.header
+      assert_equal " 1  2  3  4  5  6  7 \n" \
+                   " 8  9 10 11 12 13 14 \n" \
+                   "15 16 17 18 19 20 21 \n" \
+                   '22 23 24 25 26 27 28 ', cal.dates
+    end
+  end
 end
