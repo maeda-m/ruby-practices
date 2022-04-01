@@ -5,7 +5,7 @@ require_relative 'date_patch'
 class Calendar
   ROW_WIDTH = 21
 
-  attr_accessor :year, :month, :beginning_of_day, :end_of_day
+  attr_accessor :year, :month, :beginning_of_month, :end_of_month
 
   def initialize(year, month)
     today = Date.today
@@ -18,30 +18,30 @@ class Calendar
     @year = today.year
     @month = today.month
   ensure
-    @beginning_of_day = Date.new(@year, @month, 1)
-    @end_of_day = Date.new(@year, @month, -1)
+    @beginning_of_month = Date.new(@year, @month, 1)
+    @end_of_month = Date.new(@year, @month, -1)
   end
 
   def show
     puts title
     puts header
-    puts details
+    puts dates
   end
 
   def title
-    beginning_of_day.strftime('%m月 %Y').center(ROW_WIDTH)
+    beginning_of_month.strftime('%m月 %Y').center(ROW_WIDTH)
   end
 
   def header
     %w[日 月 火 水 木 金 土].join(' ')
   end
 
-  def details(start_day = :sunday)
-    beginning_of_week = beginning_of_day.beginning_of_week(start_day)
-    end_of_week = end_of_day.end_of_week(start_day)
+  def dates(start_day = :sunday)
+    beginning_of_week = beginning_of_month.beginning_of_week(start_day)
+    end_of_week = end_of_month.end_of_week(start_day)
 
     all_day = (beginning_of_week..end_of_week)
-    days_in_month = (beginning_of_day..end_of_day)
+    days_in_month = (beginning_of_month..end_of_month)
 
     weeks = []
     5.times do |i|
