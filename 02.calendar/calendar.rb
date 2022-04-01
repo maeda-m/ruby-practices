@@ -5,21 +5,21 @@ require_relative 'date_patch'
 class Calendar
   ROW_WIDTH = 21
 
-  attr_accessor :year, :month, :beginning_of_month, :end_of_month
+  attr_accessor :beginning_of_month, :end_of_month
 
   def initialize(year, month)
     today = Date.today
 
-    @year = year || today.year
-    @month = month || today.month
+    year ||= today.year
+    month ||= today.month
 
-    Date.new(@year, @month)
+    Date.new(year, month)
   rescue Date::Error
-    @year = today.year
-    @month = today.month
+    year = today.year
+    month = today.month
   ensure
-    @beginning_of_month = Date.new(@year, @month, 1)
-    @end_of_month = Date.new(@year, @month, -1)
+    @beginning_of_month = Date.new(year, month, 1)
+    @end_of_month = Date.new(year, month, -1)
   end
 
   def show

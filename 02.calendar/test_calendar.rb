@@ -39,4 +39,22 @@ describe Calendar do
                  "19 20 21 22 23 24 25 \n" \
                  '26 27 28 29 30 31    ', cal.dates
   end
+
+  describe '異常系' do
+    it '2022年04月のカレンダーが表示できること（異常系）' do
+      def Date.today
+        Date.new(2022, 4, 1)
+      end
+
+      cal = Calendar.new(1999, 13)
+
+      assert_equal '      04月 2022       ', cal.title
+      assert_equal '日 月 火 水 木 金 土', cal.header
+      assert_equal "                1  2 \n" \
+                   " 3  4  5  6  7  8  9 \n" \
+                   "10 11 12 13 14 15 16 \n" \
+                   "17 18 19 20 21 22 23 \n" \
+                   '24 25 26 27 28 29 30 ', cal.dates
+    end
+  end
 end
