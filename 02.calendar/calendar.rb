@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'date_patch'
+require 'date'
 
 class Calendar
   ROW_WIDTH = 21
@@ -36,24 +36,16 @@ class Calendar
     %w[日 月 火 水 木 金 土].join(' ')
   end
 
-  def dates(start_day = :sunday)
-    beginning_of_week = beginning_of_month.beginning_of_week(start_day)
-    end_of_week = end_of_month.end_of_week(start_day)
-
-    all_day = (beginning_of_week..end_of_week)
+  def dates
     days_in_month = (beginning_of_month..end_of_month)
 
-    weeks = []
-    5.times do |i|
-      days_in_week = all_day.to_a.slice(i * 7, 7)
-      break if days_in_week.nil?
-
-      weeks << days_in_week.map do |date|
-        day = days_in_month.include?(date) ? date.day : nil
-        day.to_s.rjust(2)
-      end
+    result = '   ' * beginning_of_month.wday
+    days_in_month.each do |date|
+      result += date.day.to_s.rjust(2)
+      result +=  ' '
+      result +=  "\n" if date.saturday? && end_of_month != date
     end
 
-    weeks.map { |d| d.join(' ').ljust(ROW_WIDTH) }.join("\n")
+    result
   end
 end
