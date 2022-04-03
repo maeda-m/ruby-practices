@@ -28,14 +28,14 @@ module List
 
     def core_options
       {
-        ignore_mode: self.ignore_mode,
+        ignore_mode: ignore_mode
       }
     end
 
     def render_options
       {
-        format: self.format,
-        sort_type: self.sort_type,
+        format: format,
+        sort_type: sort_type
       }
     end
   end

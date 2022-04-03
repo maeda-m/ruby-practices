@@ -65,18 +65,18 @@ describe List::Command do
       it '空ディレクトリを指定した場合は何も表示されないこと' do
         empty_dir_path = File.join(@child_dir_path, '003-日本語')
         option = List::Option.new([empty_dir_path])
-        assert_output('') { List::Command.run(option) }
+        assert_output("\n") { List::Command.run(option) }
       end
 
       it '存在しないディレクトリを指定した場合はエラーが表示されること' do
         option = List::Option.new(['./not-exist-directory'])
-        stdout = "'./not-exist-directory' にアクセスできません"
+        stdout = "'./not-exist-directory' にアクセスできません\n"
         assert_output(stdout) { List::Command.run(option) }
       end
 
       it '権限がないディレクトリを指定した場合はエラーが表示されること' do
         option = List::Option.new(['/root/'])
-        stdout = "'/root/' にアクセスできません"
+        stdout = "'/root/' にアクセスできません\n"
         assert_output(stdout) { List::Command.run(option) }
       end
     end
@@ -85,18 +85,18 @@ describe List::Command do
       it 'ファイル一覧が表示されること' do
         file_path = File.join(@child_dir_path, '002.txt')
         option = List::Option.new([file_path])
-        assert_output('002.txt') { List::Command.run(option) }
+        assert_output("002.txt\n") { List::Command.run(option) }
       end
 
       it '存在しないファイルを指定した場合はエラーが表示されること' do
         option = List::Option.new(['./not-exist-file.yml'])
-        stdout = "'./not-exist-file.yml' にアクセスできません"
+        stdout = "'./not-exist-file.yml' にアクセスできません\n"
         assert_output(stdout) { List::Command.run(option) }
       end
 
       it '権限がないファイルを指定した場合はエラーが表示されること' do
         option = List::Option.new(['/root/.bashrc'])
-        stdout = "'/root/.bashrc' にアクセスできません"
+        stdout = "'/root/.bashrc' にアクセスできません\n"
         assert_output(stdout) { List::Command.run(option) }
       end
     end
