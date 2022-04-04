@@ -2,12 +2,10 @@
 
 module List
   class Core
-    attr_reader :path, :options
+    attr_reader :path
 
-    def initialize(path, options)
+    def initialize(path)
       @path = path
-      # NOTE: options は "lsコマンドを作る1：オプション無しのlsを作る" では使用しない
-      @options = options
     end
 
     def entries

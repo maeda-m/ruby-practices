@@ -6,8 +6,8 @@ require_relative 'rendering'
 module List
   module Command
     def self.run(option)
-      core = List::Core.new(option.path, option.core_options)
-      List::Rendering.new(option.render_options).render(core.entries)
+      core = List::Core.new(option.path)
+      List::Rendering.new.render(core.entries)
     rescue List::NotFoundOrAccessDeniedError => e
       puts e.message
     end

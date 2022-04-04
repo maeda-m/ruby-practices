@@ -5,13 +5,6 @@ module List
     MAX_COLUMN_COUNT = 3
     DEFAULT_MARGIN_WIDTH = 3
 
-    attr_reader :options
-
-    def initialize(options)
-      # NOTE: options は "lsコマンドを作る1：オプション無しのlsを作る" では使用しない
-      @options = options
-    end
-
     def render(entries)
       if entries.empty?
         puts ''
