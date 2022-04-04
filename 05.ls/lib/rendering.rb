@@ -33,28 +33,30 @@ module List
 
     def render_rows(columns)
       columns = columns.map do |column|
-        max_bytesize = max_bytesize_with_multi_byte(column) + DEFAULT_MARGIN_BYTESIZE
-        column.map { |file_path| ljust_with_multi_byte(file_path, max_bytesize) }
+        max_width = column.map { |file_path| string_width_with_multibyte(file_path) }.max
+        max_width += DEFAULT_MARGIN_BYTESIZE
+
+        column.map { |file_path| ljust_with_multibyte(file_path, max_width) }
       end
 
       rows = columns.transpose
       rows.map(&:join).map(&:strip).join("\n")
     end
 
-    def ljust_with_multi_byte(str, bytesize, padding = ' ')
-      str.ljust(bytesize, padding)
+    def string_width_with_multibyte(str)
+      str.size + multibyte_char_count(str)
     end
 
-    def max_bytesize_with_multi_byte(column)
-      column.map { |file_path| bytesize_with_multi_byte(file_path) }.max
+    def ljust_with_multibyte(str, width, padding = ' ')
+      width -= multibyte_char_count(str)
+
+      str.ljust(width, padding)
     end
 
-    def bytesize_with_multi_byte(str)
+    def multibyte_char_count(str)
       # See: https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja
       # See: https://github.com/k-takata/Onigmo/blob/master/doc/UnicodeProps.txt
-      str = str.gsub(/[ｧ-ﾝﾞﾟ]/, ' ')
-      multi_byte_count = str.scan(/[\p{Hiragana}|\p{Katakana}|\p{Han}]/).size
-      str.bytesize - (2 * multi_byte_count)
+      str.gsub(/[ｧ-ﾝﾞﾟ]/, ' ').scan(/[\p{Hiragana}|\p{Katakana}|\p{Han}]/).size
     end
   end
 end
