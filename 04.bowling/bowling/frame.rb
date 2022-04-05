@@ -41,7 +41,7 @@ module Bowling
     end
 
     def add_strike_shot
-      add_shot(Frame::MAX_SHOT_PIN)
+      add_shot(MAX_SHOT_PIN)
       add_shot(0, exclude: true) unless final_frame?
     end
 
@@ -57,8 +57,8 @@ module Bowling
       points = 0
       return points unless next_frame
 
-      return self.class.sibling_shots(2, next_frame).sum(&:pin) if strike?
-      return self.class.sibling_shots(1, next_frame).sum(&:pin) if spare?
+      return Frame.sibling_shots(2, next_frame).sum(&:pin) if strike?
+      return Frame.sibling_shots(1, next_frame).sum(&:pin) if spare?
 
       points
     end
@@ -66,11 +66,11 @@ module Bowling
     def spare?
       return if strike?
 
-      shots.sum(&:pin) == Frame::MAX_SHOT_PIN
+      shots.sum(&:pin) == MAX_SHOT_PIN
     end
 
     def strike?
-      shots.first.pin == Frame::MAX_SHOT_PIN
+      shots.first.pin == MAX_SHOT_PIN
     end
 
     def fixed?

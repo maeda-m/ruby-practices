@@ -5,10 +5,7 @@ require_relative 'frame'
 module Bowling
   class Game
     MAX_FRAME_SIZE = 10
-
-    MARKS = {
-      strike: 'X'
-    }.freeze
+    MARK_STRIKE = 'X'
 
     attr_reader :frames
 
@@ -18,7 +15,7 @@ module Bowling
 
         frame = game.frames.first
         records.split(',').each do |record|
-          if record == Game::MARKS[:strike]
+          if record == MARK_STRIKE
             frame.add_strike_shot
           else
             frame.add_shot(record.to_i)
@@ -33,7 +30,7 @@ module Bowling
 
     def initialize
       @frames = []
-      Game::MAX_FRAME_SIZE.times { add_frame }
+      MAX_FRAME_SIZE.times { add_frame }
     end
 
     def add_frame
