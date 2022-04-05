@@ -33,13 +33,15 @@ module Bowling
       MAX_FRAME_SIZE.times { add_frame }
     end
 
+    def score
+      frames.sum(&:score)
+    end
+
+    private
+
     def add_frame
       prev_frame = frames.last
       frames << Frame.new(prev_frame)
-    end
-
-    def score
-      frames.sum(&:score)
     end
   end
 end

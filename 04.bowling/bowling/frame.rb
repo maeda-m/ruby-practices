@@ -10,14 +10,14 @@ module Bowling
     attr_reader :position, :shots, :prev_frame
 
     class << self
-      def sibling_shots(expected_size, frame, shots = [])
-        return shots unless frame
+      def sibling_shots(expected_size, frame)
+        return [] unless frame
 
-        shots += frame.shots.reject(&:exclude?).slice(0, expected_size)
+        shots = frame.shots.reject(&:exclude?).slice(0, expected_size)
 
         if shots.size < expected_size
           expected_size -= shots.size
-          shots = sibling_shots(expected_size, frame.next_frame, shots)
+          shots += sibling_shots(expected_size, frame.next_frame)
         end
 
         shots
@@ -32,10 +32,6 @@ module Bowling
       after_initialize
     end
 
-    def after_initialize
-      prev_frame&.next_frame = self
-    end
-
     def add_shot(pin, exclude: false)
       shots << Shot.new(pin, exclude)
     end
@@ -45,12 +41,18 @@ module Bowling
       add_shot(0, exclude: true) unless final_frame?
     end
 
-    def final_frame?
-      position == Game::MAX_FRAME_SIZE
-    end
-
     def score
       bonus_points + shots.sum(&:pin)
+    end
+
+    def fixed?
+      max_shot_size == shots.size
+    end
+
+    private
+
+    def after_initialize
+      prev_frame&.next_frame = self
     end
 
     def bonus_points
@@ -63,22 +65,22 @@ module Bowling
       points
     end
 
-    def spare?
-      return if strike?
-
-      shots.sum(&:pin) == MAX_SHOT_PIN
-    end
-
     def strike?
       shots.first.pin == MAX_SHOT_PIN
     end
 
-    def fixed?
-      max_shot_size <= shots.size
+    def spare?
+      return false if strike?
+
+      shots.sum(&:pin) == MAX_SHOT_PIN
     end
 
     def max_shot_size
       final_frame? ? 3 : 2
+    end
+
+    def final_frame?
+      position == Game::MAX_FRAME_SIZE
     end
   end
 end
