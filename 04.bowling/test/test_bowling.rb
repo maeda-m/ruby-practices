@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'debug'
 require 'minitest/autorun'
 require_relative '../bowling'
 
@@ -40,7 +39,7 @@ describe Bowling::Game do
     assert_equal 0, game.score
   end
 
-  it 'スコアは 110 であること' do
+  it 'スコアは 144 であること' do
     game = Bowling::Game.parse('1,9,2,8,3,7,4,6,5,5,6,4,7,3,8,2,9,1,0,10,0')
     assert_equal 144, game.score
   end
