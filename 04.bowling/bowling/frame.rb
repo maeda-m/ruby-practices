@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'shot'
+
 module Bowling
   class Frame
     MAX_SHOT_PIN = 10
@@ -80,5 +82,3 @@ module Bowling
     end
   end
 end
-
-require_relative 'shot'

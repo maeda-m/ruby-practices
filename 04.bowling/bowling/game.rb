@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'frame'
+
 module Bowling
   class Game
     MAX_FRAME_SIZE = 10
@@ -44,5 +46,3 @@ module Bowling
     end
   end
 end
-
-require_relative 'frame'

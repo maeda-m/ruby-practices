@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require_relative 'bowling/game'
+
 module Bowling
   def self.play(record)
     game = Bowling::Game.parse(record)
@@ -8,8 +10,6 @@ module Bowling
     game.score
   end
 end
-
-require_relative 'bowling/game'
 
 if __FILE__ == $PROGRAM_NAME
   record = ARGV[0]
