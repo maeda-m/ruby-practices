@@ -4,7 +4,7 @@ require_relative 'shot'
 
 module Bowling
   class Frame
-    MAX_SHOT_PIN = 10
+    MAX_HIT_COUNT = 10
 
     attr_accessor :next_frame
     attr_reader :position, :shots, :prev_frame
@@ -32,17 +32,17 @@ module Bowling
       after_initialize
     end
 
-    def add_shot(pin, exclude: false)
-      shots << Shot.new(pin, exclude)
+    def add_shot(hit_count, exclude: false)
+      shots << Shot.new(hit_count, exclude)
     end
 
     def add_strike_shot
-      add_shot(MAX_SHOT_PIN)
+      add_shot(MAX_HIT_COUNT)
       add_shot(0, exclude: true) unless final_frame?
     end
 
     def score
-      bonus_points + shots.sum(&:pin)
+      bonus_points + shots.sum(&:hit_count)
     end
 
     def fixed?
@@ -59,20 +59,20 @@ module Bowling
       points = 0
       return points unless next_frame
 
-      return Frame.sibling_shots(2, next_frame).sum(&:pin) if strike?
-      return Frame.sibling_shots(1, next_frame).sum(&:pin) if spare?
+      return Frame.sibling_shots(2, next_frame).sum(&:hit_count) if strike?
+      return Frame.sibling_shots(1, next_frame).sum(&:hit_count) if spare?
 
       points
     end
 
     def strike?
-      shots.first.pin == MAX_SHOT_PIN
+      shots.first.hit_count == MAX_HIT_COUNT
     end
 
     def spare?
       return false if strike?
 
-      shots.sum(&:pin) == MAX_SHOT_PIN
+      shots.sum(&:hit_count) == MAX_HIT_COUNT
     end
 
     def max_shot_size

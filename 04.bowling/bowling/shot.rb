@@ -2,10 +2,10 @@
 
 module Bowling
   class Shot
-    attr_reader :pin, :exclude
+    attr_reader :hit_count, :exclude
 
-    def initialize(pin, exclude)
-      @pin = pin
+    def initialize(hit_count, exclude)
+      @hit_count = hit_count
       @exclude = exclude
     end
 
