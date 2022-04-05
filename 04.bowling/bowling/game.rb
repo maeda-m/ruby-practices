@@ -37,8 +37,8 @@ module Bowling
     def add_frame(frame = nil)
       self.frames ||= []
 
-      frame ||= Frame.new
-      frame.prev_frame = self.frames.last
+      prev_frame = self.frames.last
+      frame ||= Frame.new(prev_frame)
 
       self.frames << frame
 

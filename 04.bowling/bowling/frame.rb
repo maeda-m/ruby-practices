@@ -4,8 +4,8 @@ module Bowling
   class Frame
     MAX_SHOT_PIN = 10
 
-    attr_accessor :position, :shots, :next_frame
-    attr_reader :prev_frame
+    attr_accessor :next_frame
+    attr_reader :position, :shots, :prev_frame
 
     class << self
       def sibling_shots(expected_size, frame, shots = [])
@@ -22,9 +22,16 @@ module Bowling
       end
     end
 
-    def initialize(position = nil, shots = [])
-      @position = position
-      @shots = shots
+    def initialize(prev_frame = nil)
+      @prev_frame = prev_frame
+      @position = prev_frame&.position.to_i + 1
+      @shots = []
+
+      after_initialize
+    end
+
+    def after_initialize
+      prev_frame&.next_frame = self
     end
 
     def add_shot(pin, exclude: false)
@@ -62,18 +69,6 @@ module Bowling
 
     def strike?
       shots.first.pin == Frame::MAX_SHOT_PIN
-    end
-
-    def prev_frame=(frame)
-      if frame
-        prev_frame_position = frame.position
-        frame.next_frame = self
-      else
-        prev_frame_position = 0
-      end
-
-      self.position = prev_frame_position + 1
-      @prev_frame = frame
     end
 
     def fixed?
