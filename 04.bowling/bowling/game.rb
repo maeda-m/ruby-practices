@@ -8,12 +8,11 @@ module Bowling
       strike: 'X'
     }.freeze
 
-    attr_accessor :frames
+    attr_reader :frames
 
     class << self
       def parse(records)
         game = new
-        Game::MAX_FRAME_SIZE.times { |_i| game.add_frame }
 
         frame = game.frames.first
         records.split(',').each do |record|
@@ -30,19 +29,14 @@ module Bowling
       end
     end
 
-    def initialize(frames = [])
-      frames.each { |frame| add_frame(frame) }
+    def initialize
+      @frames = []
+      Game::MAX_FRAME_SIZE.times { add_frame }
     end
 
-    def add_frame(frame = nil)
-      self.frames ||= []
-
-      prev_frame = self.frames.last
-      frame ||= Frame.new(prev_frame)
-
-      self.frames << frame
-
-      frame
+    def add_frame
+      prev_frame = frames.last
+      frames << Frame.new(prev_frame)
     end
 
     def score
