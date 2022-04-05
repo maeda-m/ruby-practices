@@ -2,10 +2,15 @@
 
 module Bowling
   class Shot
-    attr_accessor :pins, :exclude
+    attr_reader :pin, :exclude
+
+    def initialize(pin, exclude)
+      @pin = pin
+      @exclude = exclude
+    end
 
     def exclude?
-      !!exclude
+      exclude
     end
   end
 end
