@@ -29,7 +29,7 @@ module Bowling
       @position = prev_frame&.position.to_i + 1
       @shots = []
 
-      after_initialize
+      prev_frame&.next_frame = self
     end
 
     def add_shot(hit_count, exclude: false)
@@ -50,10 +50,6 @@ module Bowling
     end
 
     private
-
-    def after_initialize
-      prev_frame&.next_frame = self
-    end
 
     def bonus_points
       points = 0
