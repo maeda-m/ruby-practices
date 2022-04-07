@@ -9,28 +9,20 @@ module Bowling
 
     attr_reader :frames
 
-    class << self
-      def parse(records)
-        game = new
-
-        frame = game.frames.first
-        records.split(',').each do |record|
-          if record == MARK_STRIKE
-            frame.add_strike_shot
-          else
-            frame.add_shot(record.to_i)
-          end
-
-          frame = frame.next_frame if frame.fixed?
-        end
-
-        game
-      end
-    end
-
-    def initialize
+    def initialize(records)
       @frames = []
       MAX_FRAME_SIZE.times { add_frame }
+
+      frame = @frames.first
+      records.split(',').each do |record|
+        if record == MARK_STRIKE
+          frame.add_strike_shot
+        else
+          frame.add_shot(record.to_i)
+        end
+
+        frame = frame.next_frame if frame.fixed?
+      end
     end
 
     def score

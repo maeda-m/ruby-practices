@@ -5,9 +5,7 @@ require_relative 'bowling/game'
 
 module Bowling
   def self.play(record)
-    game = Bowling::Game.parse(record)
-
-    game.score
+    Bowling::Game.new(record).score
   end
 end
 
