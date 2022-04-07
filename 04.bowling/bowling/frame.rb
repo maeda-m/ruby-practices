@@ -37,13 +37,13 @@ module Bowling
     private
 
     def bonus_point
-      points = 0
-      return points unless next_frame
+      point = 0
+      return point unless next_frame
 
       return sibling_shots(2, next_frame).sum(&:hit_count) if strike?
       return sibling_shots(1, next_frame).sum(&:hit_count) if spare?
 
-      points
+      point
     end
 
     def sibling_shots(expected_size, frame)
