@@ -42,7 +42,7 @@ module Bowling
     end
 
     def score
-      bonus_points + shots.sum(&:hit_count)
+      bonus_point + shots.sum(&:hit_count)
     end
 
     def fixed?
@@ -51,7 +51,7 @@ module Bowling
 
     private
 
-    def bonus_points
+    def bonus_point
       points = 0
       return points unless next_frame
 
