@@ -9,21 +9,6 @@ module Bowling
     attr_accessor :next_frame
     attr_reader :position, :shots, :prev_frame
 
-    class << self
-      def sibling_shots(expected_size, frame)
-        return [] unless frame
-
-        shots = frame.shots.reject(&:exclude?).slice(0, expected_size)
-
-        if shots.size < expected_size
-          expected_size -= shots.size
-          shots += sibling_shots(expected_size, frame.next_frame)
-        end
-
-        shots
-      end
-    end
-
     def initialize(prev_frame = nil)
       @prev_frame = prev_frame
       @position = prev_frame&.position.to_i + 1
@@ -55,10 +40,23 @@ module Bowling
       points = 0
       return points unless next_frame
 
-      return Frame.sibling_shots(2, next_frame).sum(&:hit_count) if strike?
-      return Frame.sibling_shots(1, next_frame).sum(&:hit_count) if spare?
+      return sibling_shots(2, next_frame).sum(&:hit_count) if strike?
+      return sibling_shots(1, next_frame).sum(&:hit_count) if spare?
 
       points
+    end
+
+    def sibling_shots(expected_size, frame)
+      return [] unless frame
+
+      frame.shots.reject(&:exclude?).slice(0, expected_size).then do |shots|
+        if shots.size < expected_size
+          expected_size -= shots.size
+          shots += sibling_shots(expected_size, frame.next_frame)
+        end
+
+        shots
+      end
     end
 
     def strike?
