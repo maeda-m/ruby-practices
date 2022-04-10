@@ -11,12 +11,12 @@ $ ./02.calendar/cal.rb
 
 ```
 $ cd ./ruby-practices
-$ ruby ./02.calendar/test_calendar.rb
+$ rake test
 ```
 
 ## Linter
 
 ```
 $ cd ./ruby-practices
-$ bundle exec rubocop
+$ rubocop
 ```
