@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
+
 require 'minitest/autorun'
 require_relative '../ls'
 
@@ -102,3 +104,5 @@ describe List::Command do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength
