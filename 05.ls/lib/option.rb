@@ -7,7 +7,7 @@ module List
     attr_reader :path
 
     def initialize(argv, default_path = Dir.pwd)
-      @optparse = OptionParser.new do |opts|
+      optparse = OptionParser.new do |opts|
         opts.banner = 'Usage: ls.rb [OPTION] [PATH]'
 
         opts.separator ''
@@ -18,7 +18,7 @@ module List
           exit 1
         end
       end
-      @optparse.parse!(argv)
+      optparse.parse!(argv)
       @path = argv.first || default_path
     end
   end
