@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
 module List
-  class Rendering
+  class ColumnLayout
     MAX_COLUMN_SIZE = 3
     DEFAULT_MARGIN_WIDTH = 3
 
-    def render(entries)
+    attr_reader :entries
+
+    def initialize(entries)
+      @entries = entries
+    end
+
+    def render
       if entries.empty?
         puts ''
       else

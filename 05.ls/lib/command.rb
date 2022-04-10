@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require_relative 'core'
-require_relative 'rendering'
+require_relative 'column_layout'
 
 module List
   module Command
     def self.run(option)
       core = List::Core.new(option.path)
-      List::Rendering.new.render(core.entries)
+      List::ColumnLayout.new(core.entries).render
     rescue List::NotFoundOrAccessDeniedError => e
       puts e.message
     end
