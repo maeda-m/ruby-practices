@@ -2,7 +2,7 @@
 
 module List
   class Rendering
-    MAX_COLUMN_COUNT = 3
+    MAX_COLUMN_SIZE = 3
     DEFAULT_MARGIN_WIDTH = 3
 
     def render(entries)
@@ -21,7 +21,7 @@ module List
     end
 
     def generate_rows(entries)
-      max_row_size, mod = entries.size.divmod(MAX_COLUMN_COUNT)
+      max_row_size, mod = entries.size.divmod(MAX_COLUMN_SIZE)
       max_row_size += 1 unless mod.zero?
 
       columns = []
