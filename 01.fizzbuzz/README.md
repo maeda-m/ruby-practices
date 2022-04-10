@@ -11,12 +11,12 @@ $ ./01.fizzbuzz/fizzbuzz.rb
 
 ```
 $ cd ./ruby-practices
-$ ruby ./01.fizzbuzz/test_fizzbuzz.rb
+$ rake test
 ```
 
 ## Linter
 
 ```
 $ cd ./ruby-practices
-$ bundle exec rubocop
+$ rubocop
 ```
