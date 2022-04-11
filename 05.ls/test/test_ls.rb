@@ -103,6 +103,42 @@ describe List::Command do
       end
     end
   end
+
+  describe 'オプション -a ありのls' do
+    describe 'ディレクトリ・ファイル指定なし' do
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+        stdout = <<~STDOUT
+          .         003.txt                    008.txt
+          ..        004.txt                    009.txt
+          .ignore   005.txt                    010.txt
+          001.txt   006-ﾆﾎﾝｺﾞ.txt              011.txt
+          002.txt   007-日本語のディレクトリ
+        STDOUT
+
+        option = List::Option.new(['-a'])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+
+    describe 'ディレクトリ指定あり' do
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+        stdout = <<~STDOUT
+          .         002.txt      005.txt
+          ..        003-日本語
+          001.txt   004.txt
+        STDOUT
+
+        option = List::Option.new(['-a', @child_dir_path])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+
+      it '空ディレクトリを指定した場合は親およびカレントディレクトリのみが表示されること' do
+        empty_dir_path = File.join(@child_dir_path, '003-日本語')
+        option = List::Option.new(['-a', empty_dir_path])
+        assert_output(".   ..\n") { List::Command.run(option) }
+      end
+    end
+  end
 end
 
 # rubocop:enable Metrics/BlockLength

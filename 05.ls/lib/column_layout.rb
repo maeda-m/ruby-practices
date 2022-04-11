@@ -27,14 +27,12 @@ module List
     end
 
     def generate_rows(entries)
-      max_row_size, mod = entries.size.divmod(MAX_COLUMN_SIZE)
-      max_row_size += 1 unless mod.zero?
+      max_row_size = (entries.size.to_f / MAX_COLUMN_SIZE).ceil
 
-      columns = []
-      entries.each_slice(max_row_size) do |column|
+      columns = entries.each_slice(max_row_size).map do |column|
         blank_factors = Array.new(max_row_size - column.size) { '' }
         # NOTE: サイズが不揃いな配列にならないように空要素を追加している
-        columns << column + blank_factors
+        column + blank_factors
       end
 
       transpose_with_ljust_columns(columns)

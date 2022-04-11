@@ -2,17 +2,20 @@
 
 module List
   class Core
-    attr_reader :path
-
-    def initialize(path)
-      @path = path
+    def initialize(option)
+      @option = option
     end
 
     def entries
+      path = @option.path
+
       if FileTest.file?(path)
         [File.basename(path)]
       else
-        Dir.entries(path).reject(&method(:ignore?)).sort
+        entries = Dir.entries(path).sort
+        return entries unless @option.ignore_minimal?
+
+        entries.reject(&method(:ignore?))
       end
     rescue Errno::EACCES, Errno::ENOENT
       message = "'#{path}' にアクセスできません"
