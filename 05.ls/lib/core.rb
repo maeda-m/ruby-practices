@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-
 module List
   class Core
-    extend Forwardable
-
     def initialize(option)
       @option = option
     end
