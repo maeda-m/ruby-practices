@@ -6,18 +6,18 @@ module List
   class Core
     extend Forwardable
 
-    delegate %i[path ignore_minimal?] => :@option
-
     def initialize(option)
       @option = option
     end
 
     def entries
+      path = @option.path
+
       if FileTest.file?(path)
         [File.basename(path)]
       else
         entries = Dir.entries(path).sort
-        return entries unless ignore_minimal?
+        return entries unless @option.ignore_minimal?
 
         entries.reject(&method(:ignore?))
       end
