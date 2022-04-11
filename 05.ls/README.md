@@ -11,12 +11,12 @@ $ ./05.ls/ls.rb
 
 ```
 $ cd ./ruby-practices
-$ ruby ./05.ls/test/test_ls.rb
+$ rake test
 ```
 
 ## Linter
 
 ```
-$ cd ./ruby-practices/05.ls
+$ cd ./ruby-practices
 $ rubocop
 ```
