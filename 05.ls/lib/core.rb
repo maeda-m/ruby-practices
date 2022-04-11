@@ -1,18 +1,25 @@
 # frozen_string_literal: true
 
+require 'forwardable'
+
 module List
   class Core
-    attr_reader :path
+    extend Forwardable
 
-    def initialize(path)
-      @path = path
+    delegate %i[path ignore_minimal?] => :@option
+
+    def initialize(option)
+      @option = option
     end
 
     def entries
       if FileTest.file?(path)
         [File.basename(path)]
       else
-        Dir.entries(path).reject(&method(:ignore?)).sort
+        entries = Dir.entries(path).sort
+        return entries unless ignore_minimal?
+
+        entries.reject(&method(:ignore?))
       end
     rescue Errno::EACCES, Errno::ENOENT
       message = "'#{path}' にアクセスできません"
