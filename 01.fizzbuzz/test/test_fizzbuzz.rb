@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
+
 require 'minitest/autorun'
-require_relative 'fizzbuzz'
+require_relative '../fizzbuzz'
 
 describe FizzBuzz do
   it '1から20までの数をプリントするプログラムであること' do
@@ -35,3 +37,5 @@ describe FizzBuzz do
     assert_equal '', FizzBuzz.ask(4.2)
   end
 end
+
+# rubocop:enable Metrics/BlockLength

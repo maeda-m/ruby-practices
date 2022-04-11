@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
+
 require 'minitest/autorun'
-require_relative 'calendar'
+require_relative '../calendar'
 
 describe Calendar do
   it '1970年01月のカレンダーが表示できること' do
@@ -71,3 +73,5 @@ describe Calendar do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength
