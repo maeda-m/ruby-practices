@@ -13,6 +13,8 @@ module List
         [File.basename(path)]
       else
         entries = Dir.entries(path).sort
+        entries = entries.reverse if @option.sort_reverse?
+
         return entries unless @option.ignore_minimal?
 
         entries.reject(&method(:ignore?))
