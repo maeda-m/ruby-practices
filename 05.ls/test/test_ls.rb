@@ -139,6 +139,34 @@ describe List::Command do
       end
     end
   end
+
+  describe 'オプション -r ありのls' do
+    describe 'ディレクトリ・ファイル指定なし' do
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+        stdout = <<~STDOUT
+          011.txt   007-日本語のディレクトリ   003.txt
+          010.txt   006-ﾆﾎﾝｺﾞ.txt              002.txt
+          009.txt   005.txt                    001.txt
+          008.txt   004.txt
+        STDOUT
+
+        option = List::Option.new(['-r'])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+
+    describe 'ディレクトリ指定あり' do
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+        stdout = <<~STDOUT
+          005.txt   003-日本語   001.txt
+          004.txt   002.txt
+        STDOUT
+
+        option = List::Option.new(['-r', @child_dir_path])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+  end
 end
 
 # rubocop:enable Metrics/BlockLength
