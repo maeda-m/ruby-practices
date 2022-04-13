@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Style/NumericLiteralPrefix
 
 require 'minitest/autorun'
 require_relative '../ls'
@@ -15,11 +16,38 @@ describe List::Command do
     File.write(File.join(tmp_dir_path, '003.txt'), '')
     File.write(File.join(tmp_dir_path, '004.txt'), '')
     File.write(File.join(tmp_dir_path, '005.txt'), '')
-    File.write(File.join(tmp_dir_path, '006-ﾆﾎﾝｺﾞ.txt'), '')
-    File.write(File.join(tmp_dir_path, '008.txt'), '')
-    File.write(File.join(tmp_dir_path, '009.txt'), '')
-    File.write(File.join(tmp_dir_path, '010.txt'), '')
-    File.write(File.join(tmp_dir_path, '011.txt'), '')
+
+    file_path = File.join(tmp_dir_path, '006-ﾆﾎﾝｺﾞ.txt')
+    File.write(file_path, '')
+    FileUtils.touch(file_path, mtime: Time.new(2111, 11, 22, 3, 4, 5))
+
+    file_path = File.join(tmp_dir_path, '008.txt')
+    File.open(file_path, 'w') do |f|
+      f.write('0123456789')
+      f.chmod(0600)
+    end
+    FileUtils.touch(file_path, mtime: Time.new(2000, 12, 31, 23, 59, 0))
+
+    file_path = File.join(tmp_dir_path, '009.txt')
+    File.open(file_path, 'w') do |f|
+      f.write('123')
+      f.chmod(0754)
+    end
+    FileUtils.touch(file_path, mtime: Time.new(2199, 9, 9, 9, 9, 9))
+
+    file_path = File.join(tmp_dir_path, '010.txt')
+    File.open(file_path, 'w') do |f|
+      f.write('12345')
+      f.chmod(0321)
+    end
+    FileUtils.touch(file_path, mtime: Time.new(2188, 8, 8, 8, 8, 8))
+
+    file_path = File.join(tmp_dir_path, '011.txt')
+    File.open(file_path, 'w') do |f|
+      f.write('にほんご')
+      f.chmod(0000)
+    end
+    FileUtils.touch(file_path, mtime: Time.new(2177, 7, 7, 7, 7, 7))
 
     child_dir_path = File.join(tmp_dir_path, '007-日本語のディレクトリ')
     Dir.mkdir(child_dir_path)
@@ -28,6 +56,7 @@ describe List::Command do
     Dir.mkdir(File.join(child_dir_path, '003-日本語'))
     File.write(File.join(child_dir_path, '004.txt'), '')
     File.write(File.join(child_dir_path, '005.txt'), '')
+    FileUtils.touch(child_dir_path, mtime: Time.new(2122, 2, 22, 22, 22, 22))
 
     Dir.chdir(tmp_dir_path)
     @tmp_dir_path = tmp_dir_path
@@ -167,6 +196,31 @@ describe List::Command do
       end
     end
   end
+
+  describe 'オプション -l ありのls' do
+    describe 'ディレクトリ・ファイル指定なし' do
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '001.txt'))
+        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '002.txt'))
+        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '003.txt'))
+        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '004.txt'))
+        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '005.txt'))
+
+        stdout = <<~STDOUT
+          -rw-r--r-- 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
+          drwxr-xr-x 3 maeda-m maeda-m 4096  2月 22 22:22 2122 007-日本語のディレクトリ
+          -rw------- 1 maeda-m maeda-m   10 12月 31 23:59 2000 008.txt
+          -rwxr-xr-- 1 maeda-m maeda-m    3  9月 09 09:09 2199 009.txt
+          -rw-r--r-- 1 maeda-m maeda-m    5  8月 08 08:08 2188 010.txt
+          ---------- 1 maeda-m maeda-m   12  7月 07 07:07 2177 011.txt
+        STDOUT
+
+        option = List::Option.new(['-l'])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+  end
 end
 
+# rubocop:enable Style/NumericLiteralPrefix
 # rubocop:enable Metrics/BlockLength
