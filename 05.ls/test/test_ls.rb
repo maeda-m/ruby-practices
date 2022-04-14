@@ -18,34 +18,24 @@ describe List::Command do
 
     file_path = File.join(tmp_dir_path, '006-ﾆﾎﾝｺﾞ.txt')
     File.write(file_path, '')
+    FileUtils.chmod(0o577, file_path)
     FileUtils.touch(file_path, mtime: Time.new(2111, 11, 22, 3, 4, 5))
 
     file_path = File.join(tmp_dir_path, '008.txt')
-    File.open(file_path, 'w') do |f|
-      f.write('0123456789')
-      f.chmod(0o600)
-    end
+    File.open(file_path, 'w', 0o600) { |f| f.write('0123456789') }
     FileUtils.touch(file_path, mtime: Time.new(2000, 12, 31, 23, 59, 0))
 
     file_path = File.join(tmp_dir_path, '009.txt')
-    File.open(file_path, 'w') do |f|
-      f.write('123')
-      f.chmod(0o754)
-    end
+    File.open(file_path, 'w', 0o754) { |f| f.write('123') }
     FileUtils.touch(file_path, mtime: Time.new(2199, 9, 9, 9, 9, 9))
 
     file_path = File.join(tmp_dir_path, '010.txt')
-    File.open(file_path, 'w') do |f|
-      f.write('12345')
-      f.chmod(0o321)
-    end
+    File.write(file_path, '12345')
+    FileUtils.chmod(0o321, file_path)
     FileUtils.touch(file_path, mtime: Time.new(2188, 8, 8, 8, 8, 8))
 
     file_path = File.join(tmp_dir_path, '011.txt')
-    File.open(file_path, 'w') do |f|
-      f.write('にほんご')
-      f.chmod(0o000)
-    end
+    File.open(file_path, 'w', 0o000) { |f| f.write('にほんご') }
     FileUtils.touch(file_path, mtime: Time.new(2177, 7, 7, 7, 7, 7))
 
     child_dir_path = File.join(tmp_dir_path, '007-日本語のディレクトリ')
@@ -198,15 +188,17 @@ describe List::Command do
 
   describe 'オプション -l ありのls' do
     describe 'ディレクトリ・ファイル指定なし' do
-      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+      before do
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '001.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '002.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '003.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '004.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '005.txt'))
+      end
 
+      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
         stdout = <<~STDOUT
-          -rw-r--r-- 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
+          -r-xrwxrwx 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
           drwxr-xr-x 3 maeda-m maeda-m 4096  2月 22 22:22 2122 007-日本語のディレクトリ
           -rw------- 1 maeda-m maeda-m   10 12月 31 23:59 2000 008.txt
           -rwxr-xr-- 1 maeda-m maeda-m    3  9月 09 09:09 2199 009.txt
