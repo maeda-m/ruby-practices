@@ -59,7 +59,7 @@ module List
           owner_user_name: Etc.getpwuid(@stat.uid).name,
           owner_group_name: Etc.getgrgid(@stat.gid).name,
           bytesize: @stat.size,
-          last_update_time: @stat.mtime.strftime('%-m月 %d %H:%M %Y'),
+          last_update_time: @stat.mtime,
           filename: basename
         }
       end
@@ -93,7 +93,7 @@ module List
       end
 
       def no_permission
-        Array.new(3) { BLANK_MASK } * 3
+        BLANK_MASK * 3 * 3
       end
 
       def basename
