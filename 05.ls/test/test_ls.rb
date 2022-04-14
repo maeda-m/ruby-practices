@@ -194,6 +194,9 @@ describe List::Command do
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '003.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '004.txt'))
         FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '005.txt'))
+
+        @last_update_time = Time.now.strftime('%m月 %d %H:%M %Y')
+        File.symlink('008.txt', '012-softlink.txt')
       end
 
       it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
@@ -204,6 +207,7 @@ describe List::Command do
           -rwxr-xr-- 1 maeda-m maeda-m    3 09月 09 09:09 2199 009.txt
           --wx-w---x 1 maeda-m maeda-m    5 08月 08 08:08 2188 010.txt
           ---------- 1 maeda-m maeda-m   12 07月 07 07:07 2177 011.txt
+          lrwxrwxrwx 1 maeda-m maeda-m    7 #{@last_update_time} 012-softlink.txt -> 008.txt
         STDOUT
 
         option = List::Option.new(['-l'])

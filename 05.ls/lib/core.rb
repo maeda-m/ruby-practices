@@ -41,17 +41,26 @@ module List
       }.freeze
       BLANK_MASK = '-'
 
-      attr_reader :filename
+      attr_reader :filename, :linkname
 
       delegate %i[nlink size mtime gid uid] => :@stat
 
       def initialize(absolute_path)
         @filename = File.basename(absolute_path)
-        @stat = File::Stat.new(absolute_path)
+
+        if FileTest.symlink?(absolute_path)
+          @stat = File.lstat(absolute_path)
+          @linkname = File.readlink(absolute_path)
+        else
+          @stat = File.stat(absolute_path)
+        end
       end
 
       def file_type
-        @stat.directory? ? 'd' : '-'
+        return 'd' if @stat.directory?
+        return 'l' if @stat.symlink?
+
+        '-'
       end
 
       def permission

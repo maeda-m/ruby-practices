@@ -21,7 +21,7 @@ module List
           Etc.getgrgid(entry.gid).name,
           entry.size,
           entry.mtime.strftime('%m月 %d %H:%M %Y'),
-          entry.filename
+          [entry.filename, entry.linkname].compact.join(' -> ')
         ]
       end
 
