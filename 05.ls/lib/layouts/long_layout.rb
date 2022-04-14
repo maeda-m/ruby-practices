@@ -13,7 +13,7 @@ module List
           attrs[:owner_group_name],
           attrs[:bytesize].to_s.rjust(4),
           attrs[:last_update_time].strftime('%-m月 %d %H:%M %Y').rjust(17),
-          attrs[:filename],
+          attrs[:filename]
         ].join(' ')
       end
       puts rows.join("\n")

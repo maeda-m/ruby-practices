@@ -40,7 +40,7 @@ module List
         read: 'r',
         write: 'w',
         exec: 'x'
-      }
+      }.freeze
       BLANK_MASK = '-'
       ONLY_SUPER_USER_MASK = '000'
 
@@ -81,7 +81,7 @@ module List
         return no_permission if mode == ONLY_SUPER_USER_MASK
 
         mode.chars.map do |octal_number|
-          binary_number = format('%#b', octal_number).gsub(/\A0b/, '')
+          binary_number = format('%#b', octal_number).delete_prefix('0b')
           PERMISSIONS.values.map.with_index do |symbol, i|
             if binary_number[i].to_i.zero?
               BLANK_MASK

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-# rubocop:disable Style/NumericLiteralPrefix
 
 require 'minitest/autorun'
 require_relative '../ls'
@@ -24,28 +23,28 @@ describe List::Command do
     file_path = File.join(tmp_dir_path, '008.txt')
     File.open(file_path, 'w') do |f|
       f.write('0123456789')
-      f.chmod(0600)
+      f.chmod(0o600)
     end
     FileUtils.touch(file_path, mtime: Time.new(2000, 12, 31, 23, 59, 0))
 
     file_path = File.join(tmp_dir_path, '009.txt')
     File.open(file_path, 'w') do |f|
       f.write('123')
-      f.chmod(0754)
+      f.chmod(0o754)
     end
     FileUtils.touch(file_path, mtime: Time.new(2199, 9, 9, 9, 9, 9))
 
     file_path = File.join(tmp_dir_path, '010.txt')
     File.open(file_path, 'w') do |f|
       f.write('12345')
-      f.chmod(0321)
+      f.chmod(0o321)
     end
     FileUtils.touch(file_path, mtime: Time.new(2188, 8, 8, 8, 8, 8))
 
     file_path = File.join(tmp_dir_path, '011.txt')
     File.open(file_path, 'w') do |f|
       f.write('にほんご')
-      f.chmod(0000)
+      f.chmod(0o000)
     end
     FileUtils.touch(file_path, mtime: Time.new(2177, 7, 7, 7, 7, 7))
 
@@ -222,5 +221,4 @@ describe List::Command do
   end
 end
 
-# rubocop:enable Style/NumericLiteralPrefix
 # rubocop:enable Metrics/BlockLength
