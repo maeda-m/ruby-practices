@@ -40,7 +40,6 @@ module List
         exec: 'x'
       }.freeze
       BLANK_MASK = '-'
-      ONLY_SUPER_USER_MASK = '000'
 
       attr_reader :filename
 
@@ -65,22 +64,14 @@ module List
       private
 
       def to_mask(mode)
-        return no_permission if mode == ONLY_SUPER_USER_MASK
+        permissions = PERMISSIONS.values
 
         mode.chars.map do |octal_number|
-          binary_number = format('%#b', octal_number).delete_prefix('0b')
-          PERMISSIONS.values.map.with_index do |symbol, i|
-            if binary_number[i].to_i.zero?
-              BLANK_MASK
-            else
-              symbol
-            end
+          flags = format('%03b', octal_number).chars
+          flags.map(&:to_i).map.with_index do |flag, i|
+            flag.zero? ? BLANK_MASK : permissions[i]
           end
         end.flatten.join
-      end
-
-      def no_permission
-        BLANK_MASK * 3 * 3
       end
     end
   end
