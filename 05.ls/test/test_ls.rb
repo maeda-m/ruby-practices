@@ -199,11 +199,11 @@ describe List::Command do
       it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
         stdout = <<~STDOUT
           -r-xrwxrwx 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
-          drwxr-xr-x 3 maeda-m maeda-m 4096  2月 22 22:22 2122 007-日本語のディレクトリ
+          drwxr-xr-x 3 maeda-m maeda-m 4096 02月 22 22:22 2122 007-日本語のディレクトリ
           -rw------- 1 maeda-m maeda-m   10 12月 31 23:59 2000 008.txt
-          -rwxr-xr-- 1 maeda-m maeda-m    3  9月 09 09:09 2199 009.txt
-          -rw-r--r-- 1 maeda-m maeda-m    5  8月 08 08:08 2188 010.txt
-          ---------- 1 maeda-m maeda-m   12  7月 07 07:07 2177 011.txt
+          -rwxr-xr-- 1 maeda-m maeda-m    3 09月 09 09:09 2199 009.txt
+          -rw-r--r-- 1 maeda-m maeda-m    5 08月 08 08:08 2188 010.txt
+          ---------- 1 maeda-m maeda-m   12 07月 07 07:07 2177 011.txt
         STDOUT
 
         option = List::Option.new(['-l'])

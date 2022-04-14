@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'forwardable'
-require 'etc'
 
 module List
   class Core
@@ -44,27 +43,14 @@ module List
       BLANK_MASK = '-'
       ONLY_SUPER_USER_MASK = '000'
 
-      delegate %i[size gsub ljust] => :basename
+      attr_reader :filename
+
+      delegate %i[nlink size mtime gid uid] => :@stat
 
       def initialize(absolute_path)
-        @absolute_path = absolute_path
+        @filename = File.basename(absolute_path)
         @stat = File::Stat.new(absolute_path)
       end
-
-      def to_h
-        {
-          file_type: file_type,
-          permission: permission,
-          hardlink: @stat.nlink,
-          owner_user_name: Etc.getpwuid(@stat.uid).name,
-          owner_group_name: Etc.getgrgid(@stat.gid).name,
-          bytesize: @stat.size,
-          last_update_time: @stat.mtime,
-          filename: basename
-        }
-      end
-
-      private
 
       def file_type
         @stat.directory? ? 'd' : '-'
@@ -76,6 +62,8 @@ module List
         mode = @stat.mode.to_s(8).scan(/\d{3,3}\z/).first
         to_mask(mode)
       end
+
+      private
 
       def to_mask(mode)
         return no_permission if mode == ONLY_SUPER_USER_MASK
@@ -94,10 +82,6 @@ module List
 
       def no_permission
         BLANK_MASK * 3 * 3
-      end
-
-      def basename
-        File.basename(@absolute_path)
       end
     end
   end

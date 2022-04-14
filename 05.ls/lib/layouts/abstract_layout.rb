@@ -14,14 +14,33 @@ module List
 
     private
 
-    def string_width_with_multibyte(str)
-      str.size + multibyte_char_count(str)
+    def render_rows(rows)
+      rows.map(&:join).map(&:strip).join("\n")
     end
 
-    def ljust_with_multibyte(str, width, padding = ' ')
-      width -= multibyte_char_count(str)
+    def adjust_column(column, margin_width)
+      only_integer_column = column.compact.all? { |obj| obj.is_a?(Integer) }
+      if only_integer_column
+        rjust_column(column.map(&:to_s), margin_width)
+      else
+        ljust_column(column, margin_width)
+      end
+    end
 
-      str.ljust(width, padding)
+    def rjust_column(column, margin_width)
+      max_width = column.map(&:size).max
+      width_with_margin = max_width + margin_width
+      column.map { |str| str.rjust(max_width).ljust(width_with_margin) }
+    end
+
+    def ljust_column(column, margin_width)
+      max_width = column.map { |str| string_width_with_multibyte(str) }.max
+      width_with_margin = max_width + margin_width
+      column.map { |str| str.ljust(width_with_margin - multibyte_char_count(str)) }
+    end
+
+    def string_width_with_multibyte(str)
+      str.size + multibyte_char_count(str)
     end
 
     def multibyte_char_count(str)
