@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require 'etc'
+
 module List
-  class AbstractLayout
+  class LongLayout
+    DEFAULT_MARGIN_WIDTH = 1
+
     attr_reader :entries
 
     def initialize(entries)
@@ -9,7 +13,20 @@ module List
     end
 
     def render
-      raise 'This is a method of an abstract class. Override it with your inheritance.'
+      rows = entries.map do |entry|
+        [
+          entry.file_type + entry.permission,
+          entry.nlink,
+          Etc.getpwuid(entry.uid).name,
+          Etc.getgrgid(entry.gid).name,
+          entry.size,
+          entry.mtime.strftime('%m月 %d %H:%M %Y'),
+          entry.filename
+        ]
+      end
+
+      rows = rows.transpose.map { |column| adjust_column(column, DEFAULT_MARGIN_WIDTH) }.transpose
+      puts render_rows(rows)
     end
 
     private

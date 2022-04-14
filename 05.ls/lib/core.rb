@@ -9,20 +9,19 @@ module List
     end
 
     def entries
-      directory_or_file_path = @option.path
+      path = @option.path
 
-      if FileTest.file?(directory_or_file_path)
-        [FileStat.new(directory_or_file_path)]
+      if FileTest.file?(path)
+        [FileStat.new(path)]
       else
-        directory_path = directory_or_file_path
-        entries = Dir.entries(directory_path).sort
+        entries = Dir.entries(path).sort
         entries = entries.reverse if @option.sort_reverse?
         entries = entries.reject(&method(:ignore?)) if @option.ignore_minimal?
 
-        entries.map { |file_path| FileStat.new(File.join(directory_path, file_path)) }
+        entries.map { |file_path| FileStat.new(File.join(path, file_path)) }
       end
     rescue Errno::EACCES, Errno::ENOENT
-      message = "'#{directory_or_file_path}' にアクセスできません"
+      message = "'#{path}' にアクセスできません"
       raise(NotFoundOrAccessDeniedError, message)
     end
 
