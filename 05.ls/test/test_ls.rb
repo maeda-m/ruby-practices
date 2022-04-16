@@ -88,7 +88,7 @@ describe List::Command do
       it '空ディレクトリを指定した場合は何も表示されないこと' do
         empty_dir_path = File.join(@child_dir_path, '003-日本語')
         option = List::Option.new([empty_dir_path])
-        assert_output("\n") { List::Command.run(option) }
+        assert_output('') { List::Command.run(option) }
       end
 
       it '存在しないディレクトリを指定した場合はエラーが表示されること' do

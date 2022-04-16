@@ -9,15 +9,13 @@ module List
     end
 
     def render
-      if entries.empty?
-        puts ''
-      else
-        columns = generate_columns(entries)
-        columns = adjust_columns(columns)
-        rows = columns.transpose
+      return if entries.empty?
 
-        puts rows.map(&:join).map(&:strip).join("\n")
-      end
+      columns = generate_columns(entries)
+      columns = adjust_columns(columns)
+      rows = columns.transpose
+
+      puts rows.map(&:join).map(&:strip).join("\n")
     end
 
     private
