@@ -9,7 +9,10 @@ describe List::Command do
   before do
     tmp_dir_path = Dir.mktmpdir
 
-    File.write(File.join(tmp_dir_path, '.ignore'), '')
+    file_path = File.join(tmp_dir_path, '.ignore')
+    File.open(file_path, 'w', 0o644) { |f| f.write('') }
+    FileUtils.touch(file_path, mtime: Time.new(1999, 1, 1, 1, 1, 1))
+
     File.write(File.join(tmp_dir_path, '001.txt'), '')
     File.write(File.join(tmp_dir_path, '002.txt'), '')
     File.write(File.join(tmp_dir_path, '003.txt'), '')
@@ -184,22 +187,35 @@ describe List::Command do
         assert_output(stdout) { List::Command.run(option) }
       end
     end
+
+    describe 'オプション -a を追加した場合' do
+      it 'ファイル（隠しファイルあり）とディレクトリの一覧が最大3列で表示されること' do
+        stdout = <<~STDOUT
+          005.txt      002.txt   .
+          004.txt      001.txt
+          003-日本語   ..
+        STDOUT
+
+        option = List::Option.new(['-ra', @child_dir_path])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
   end
 
   describe 'オプション -l ありのls' do
+    before do
+      FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '001.txt'))
+      FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '002.txt'))
+      FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '003.txt'))
+      FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '004.txt'))
+      FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '005.txt'))
+
+      @last_update_time = Time.now.strftime('%m月 %d %H:%M %Y')
+      File.symlink('008.txt', '012-softlink.txt')
+    end
+
     describe 'ディレクトリ・ファイル指定なし' do
-      before do
-        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '001.txt'))
-        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '002.txt'))
-        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '003.txt'))
-        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '004.txt'))
-        FileUtils.remove_entry_secure(File.join(@tmp_dir_path, '005.txt'))
-
-        @last_update_time = Time.now.strftime('%m月 %d %H:%M %Y')
-        File.symlink('008.txt', '012-softlink.txt')
-      end
-
-      it 'ファイルとディレクトリの一覧が最大3列で表示されること' do
+      it 'ファイルとディレクトリの一覧が最大1列で表示されること' do
         stdout = <<~STDOUT
           -r-xrwxrwx 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
           drwxr-xr-x 3 maeda-m maeda-m 4096 02月 22 22:22 2122 007-日本語のディレクトリ
@@ -212,6 +228,53 @@ describe List::Command do
 
         option = List::Option.new(['-l'])
         assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+
+    describe 'オプション -r を追加した場合' do
+      it 'ファイル（隠しファイルあり）とディレクトリの一覧が最大1列で逆順表示されること' do
+        stdout = <<~STDOUT
+          lrwxrwxrwx 1 maeda-m maeda-m    7 #{@last_update_time} 012-softlink.txt -> 008.txt
+          ---------- 1 maeda-m maeda-m   12 07月 07 07:07 2177 011.txt
+          --wx-w---x 1 maeda-m maeda-m    5 08月 08 08:08 2188 010.txt
+          -rwxr-xr-- 1 maeda-m maeda-m    3 09月 09 09:09 2199 009.txt
+          -rw------- 1 maeda-m maeda-m   10 12月 31 23:59 2000 008.txt
+          drwxr-xr-x 3 maeda-m maeda-m 4096 02月 22 22:22 2122 007-日本語のディレクトリ
+          -r-xrwxrwx 1 maeda-m maeda-m    0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ.txt
+        STDOUT
+
+        option = List::Option.new(['-lr'])
+        assert_output(stdout) { List::Command.run(option) }
+      end
+    end
+
+    describe 'オプション -a を追加した場合' do
+      it 'ファイル（隠しファイルあり）とディレクトリの一覧が最大1列で表示されること' do
+        option = List::Option.new(['-la'])
+        out, = capture_io { List::Command.run(option) }
+        lines = out.split("\n")
+
+        assert_equal(10, lines.size)
+        assert_match(/\Adrwx------\s+\d+ maeda-m maeda-m\s+\d+ \d{2,2}月 \d{2,2} \d{2,2}:\d{2,2} \d{4,4} \.\z/, lines[0])
+        assert_match(/\Adrwxrwxrwx\s+\d+ root    root   \s+\d+ \d{2,2}月 \d{2,2} \d{2,2}:\d{2,2} \d{4,4} \.\.\z/, lines[1])
+        assert_match(/\A-rw-r--r--\s+1 maeda-m maeda-m\s+0 01月 01 01:01 1999 \.ignore\z/, lines[2])
+        assert_match(/\A-r-xrwxrwx\s+1 maeda-m maeda-m\s+0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ\.txt\z/, lines[3])
+        assert_match(/\Alrwxrwxrwx\s+1 maeda-m maeda-m\s+7 #{@last_update_time} 012-softlink\.txt -> 008\.txt\z/, lines[9])
+      end
+    end
+
+    describe 'オプション -ar を追加した場合' do
+      it 'ファイル（隠しファイルあり）とディレクトリの一覧が最大1列で表示されること' do
+        option = List::Option.new(['-lar'])
+        out, = capture_io { List::Command.run(option) }
+        lines = out.split("\n")
+
+        assert_equal(10, lines.size)
+        assert_match(/\Alrwxrwxrwx\s+1 maeda-m maeda-m\s+7 #{@last_update_time} 012-softlink\.txt -> 008\.txt\z/, lines[0])
+        assert_match(/\A-r-xrwxrwx\s+1 maeda-m maeda-m\s+0 11月 22 03:04 2111 006-ﾆﾎﾝｺﾞ\.txt\z/, lines[6])
+        assert_match(/\A-rw-r--r--\s+1 maeda-m maeda-m\s+0 01月 01 01:01 1999 \.ignore\z/, lines[7])
+        assert_match(/\Adrwxrwxrwx\s+\d+ root    root   \s+\d+ \d{2,2}月 \d{2,2} \d{2,2}:\d{2,2} \d{4,4} \.\.\z/, lines[8])
+        assert_match(/\Adrwx------\s+\d+ maeda-m maeda-m\s+\d+ \d{2,2}月 \d{2,2} \d{2,2}:\d{2,2} \d{4,4} \.\z/, lines[9])
       end
     end
   end
