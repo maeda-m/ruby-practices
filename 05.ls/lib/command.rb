@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'core'
-require_relative 'column_layout'
-require_relative 'long_layout'
+require_relative 'layout/column_layout'
+require_relative 'layout/long_layout'
 
 module List
   module Command
