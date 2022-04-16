@@ -12,12 +12,8 @@ module List
     end
 
     def render
-      if entries.empty?
-        puts ''
-      else
-        rows = generate_rows(entries)
-        puts render_rows(rows)
-      end
+      rows = generate_rows(entries.map(&:filename))
+      puts render_rows(rows)
     end
 
     private
@@ -26,10 +22,10 @@ module List
       rows.map(&:join).map(&:strip).join("\n")
     end
 
-    def generate_rows(entries)
-      max_row_size = (entries.size.to_f / MAX_COLUMN_SIZE).ceil
+    def generate_rows(filenames)
+      max_row_size = (filenames.size.to_f / MAX_COLUMN_SIZE).ceil
 
-      columns = entries.each_slice(max_row_size).map do |column|
+      columns = filenames.each_slice(max_row_size).map do |column|
         blank_factors = Array.new(max_row_size - column.size) { '' }
         # NOTE: サイズが不揃いな配列にならないように空要素を追加している
         column + blank_factors
