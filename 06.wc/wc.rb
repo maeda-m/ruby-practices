@@ -4,74 +4,100 @@
 require 'optparse'
 require 'stringio'
 
-Message = Struct.new(:message)
-Row = Struct.new(:line_count, :word_count, :byte_count, :note)
+Row = Struct.new(:line_count, :word_count, :byte_count, :name)
 
 def main(patterns, without_byte_and_word:)
-  rows = []
   if patterns.empty?
-    io = StringIO.new(readlines.join)
-    rows << generate_row(io, without_byte_and_word)
+    word_count_via_stdin(readlines.join, without_byte_and_word)
   else
-    patterns.each do |pattern|
-      Dir.glob(pattern).each do |path|
-        file = File.open(path, 'r')
-        rows << generate_row(file, without_byte_and_word, path)
+    word_count_via_pattern(patterns, without_byte_and_word)
+  end
+end
+
+def word_count_via_stdin(io, without_byte_and_word)
+  row = generate_row(io, without_byte_and_word)
+  render_rows(adjust_column([row]))
+end
+
+def word_count_via_pattern(patterns, without_byte_and_word)
+  rows = []
+  patterns.each do |pattern|
+    Dir.glob(pattern).each do |path|
+      File.open(path, 'r') do |f|
+        rows << generate_row(f.read, without_byte_and_word, path)
       end
     end
   end
 
-  if rows.count >= 2
-    rows_without_message = rows.reject { |row| row.is_a?(Message) }
-    line_count = rows_without_message.map(&:line_count).compact.sum
-
-    footer = Row.new(line_count, nil, nil, '合計')
-    footer.word_count = rows_without_message.map(&:word_count).compact.sum unless without_byte_and_word
-    footer.byte_count = rows_without_message.map(&:byte_count).compact.sum unless without_byte_and_word
-
-    rows << footer
-  end
-
-  rows = adjust_column(rows)
-  puts rows.join("\n")
+  rows << generate_footer(rows, without_byte_and_word) if rows.count >= 2
+  render_rows(adjust_column(rows))
 end
 
-def generate_row(file, without_byte_and_word, path = nil)
-  content = file.read
-
+def generate_row(content, without_byte_and_word, path = nil)
   lines = content.split("\n")
-  words = lines.map { |line| line.split(/[[:blank:]]+/) }.flatten
-  words = words.compact.reject(&:empty?)
-  bytes = content.chars.map(&:bytesize)
 
   row = Row.new(lines.count)
-  row.word_count = words.count unless without_byte_and_word
-  row.byte_count = bytes.sum unless without_byte_and_word
-  row.note = path if path
+  unless without_byte_and_word
+    words = lines.map { |line| line.split(/[[:blank:]]+/).reject(&:empty?) }.flatten
+    bytes = content.chars.map(&:bytesize)
+
+    row.word_count = words.count
+    row.byte_count = bytes.sum
+  end
+  row.name = path if path
 
   row
-ensure
-  file.close
 end
 
-def adjust_column(rows_with_message)
-  rows = rows_with_message.reject { |row| row.is_a?(Message) }
-  max_line_width = [4, rows.map(&:line_count).max.to_s.size, 4].max
-  max_word_width = [2, rows.map(&:word_count).compact.max.to_s.size].max + 1
-  max_byte_width = rows.map(&:byte_count).compact.max.to_s.size
+def generate_footer(rows, without_byte_and_word)
+  line_count = rows.map(&:line_count).compact.sum
 
-  rows_with_message.map do |row|
-    if row.is_a?(Message)
-      row.message
-    else
-      [
-        row.line_count.to_s.rjust(max_line_width),
-        row.word_count.to_s.then { |s| s.empty? ? nil : s.rjust(max_word_width) },
-        row.byte_count.to_s.then { |s| s.empty? ? nil : s.rjust(max_byte_width) },
-        row.note
-      ].compact.reject(&:empty?).join(' ')
-    end
+  footer = Row.new(line_count)
+  unless without_byte_and_word
+    footer.word_count = rows.map(&:word_count).compact.sum
+    footer.byte_count = rows.map(&:byte_count).compact.sum
   end
+  footer.name = '合計'
+
+  footer
+end
+
+def adjust_column(rows)
+  max_widths = calculate_max_widths(rows)
+
+  rows.map do |row|
+    row.to_h.each do |key, value|
+      next if key == :name
+
+      value = value.to_s
+      next if value.empty?
+
+      row[key] = value.rjust(max_widths[key])
+    end
+
+    row
+  end
+end
+
+MIN_LINE_COUNT_WIDTH = 4
+MIN_WORD_COUNT_WIDTH = 2
+PADDING_WORD_COUNT = 1
+
+def calculate_max_widths(rows)
+  line_count_width = [MIN_LINE_COUNT_WIDTH, rows.map(&:line_count).max.to_s.size].max
+  word_count_width = [MIN_WORD_COUNT_WIDTH, rows.map(&:word_count).compact.max.to_s.size].max
+  byte_count_width = rows.map(&:byte_count).compact.max.to_s.size
+
+  {
+    line_count: line_count_width,
+    word_count: word_count_width + PADDING_WORD_COUNT,
+    byte_count: byte_count_width
+  }
+end
+
+def render_rows(rows)
+  rows = rows.map { |row| row.values.compact.reject(&:empty?).join(' ') }
+  puts rows.join("\n")
 end
 
 if __FILE__ == $PROGRAM_NAME
