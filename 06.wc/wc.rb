@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'stringio'
 
 Row = Struct.new(:line_count, :word_count, :byte_count, :name)
 
