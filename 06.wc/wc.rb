@@ -43,7 +43,7 @@ def generate_row(content, without_byte_and_word, path = nil)
     row.word_count = words.count
     row.byte_count = bytes.sum
   end
-  row.name = path if path
+  row.name = path
 
   row
 end
