@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
+require_relative 'registry'
+
 module Bowling
   module Frame
+    def self.registry
+      Registry.instance
+    end
+
     class AbstractType
-      attr_reader :next_frame, :shots
+      attr_reader :shots, :next_frame
 
       def self.inherited(subclass)
         super
-        Bowling::FrameTypeRegistry.instance.register_type(subclass)
+        Frame.registry.register_type(subclass)
       end
 
       def self.comply_with?(first_value, second_value)

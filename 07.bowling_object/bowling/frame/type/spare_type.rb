@@ -14,6 +14,8 @@ module Bowling
         (first_value.to_i + second_value.to_i) == MAX_HIT_COUNT
       end
 
+      private
+
       def bonus_point
         right_after_shots(1).sum
       end

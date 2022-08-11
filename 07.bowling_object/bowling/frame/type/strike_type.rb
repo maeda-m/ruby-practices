@@ -9,6 +9,8 @@ module Bowling
         first_value.strike?
       end
 
+      private
+
       def bonus_point
         right_after_shots(2).sum
       end

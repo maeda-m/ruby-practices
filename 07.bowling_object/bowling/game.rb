@@ -5,8 +5,7 @@ require_relative 'frame'
 module Bowling
   class Game
     def initialize(records)
-      frames = Frame.build(records)
-      @frames = frames
+      @frames = Frame.build(records)
     end
 
     def score

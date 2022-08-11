@@ -14,6 +14,8 @@ module Bowling
         true
       end
 
+      private
+
       def bonus_point
         0
       end

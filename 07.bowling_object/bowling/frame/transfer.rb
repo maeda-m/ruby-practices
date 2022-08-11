@@ -12,14 +12,11 @@ module Bowling
         @shots << value
       end
 
-      def finalized?(is_final_frame)
-        if is_final_frame
-          max_shot_size = 3
-        else
-          return true if @shots.first.strike?
+      def strike_shot?
+        @shots.first.strike?
+      end
 
-          max_shot_size = 2
-        end
+      def finalized?(max_shot_size)
         max_shot_size == @shots.size
       end
 
