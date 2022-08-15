@@ -12,7 +12,7 @@ module Bowling
       frames = []
       transfers.reverse_each do |transfer|
         next_frame = frames.first
-        frame = transfer.convert(next_frame)
+        frame = transfer.to_frame(next_frame)
 
         frames.unshift(frame)
       end

@@ -12,8 +12,6 @@ module Bowling
       extend Forwardable
       delegate reverse_each: :@transfers
 
-      MAX_FRAME_SIZE = 10
-
       def initialize(values)
         @transfers = []
 
@@ -24,7 +22,7 @@ module Bowling
           transfer.add_shot(first_value)
           @transfers[current_index] = transfer
 
-          current_index += 1 if next_frame?
+          current_index += 1 if transfer.next_frame?
         end
       end
 
@@ -32,25 +30,9 @@ module Bowling
 
       def create_transfer(first_value, second_value)
         frame_type_class = Frame.registry.find_with_policy(first_value, second_value)
-        Transfer.new(frame_type_class)
-      end
+        position = @transfers.size + 1
 
-      def next_frame?
-        transfer = @transfers.last
-
-        if final_frame?
-          max_shot_size = 3
-        else
-          return true if transfer.strike_shot?
-
-          max_shot_size = 2
-        end
-
-        transfer.finalized?(max_shot_size)
-      end
-
-      def final_frame?
-        @transfers.size == MAX_FRAME_SIZE
+        Transfer.new(frame_type_class, position)
       end
     end
   end

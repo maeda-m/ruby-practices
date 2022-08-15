@@ -12,7 +12,7 @@ module Bowling
       private
 
       def bonus_point
-        right_after_shots(2).sum
+        bonus_point_shots(2).sum
       end
     end
   end

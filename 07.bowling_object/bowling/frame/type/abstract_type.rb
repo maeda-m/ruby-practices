@@ -35,13 +35,13 @@ module Bowling
         raise NotImplementedError
       end
 
-      def right_after_shots(size)
+      def bonus_point_shots(size)
         return [] unless next_frame
 
         next_frame_shots = next_frame.shots
         after_next_frame_shots = next_frame.next_frame&.shots || []
 
-        (next_frame_shots + after_next_frame_shots).compact.slice(0, size)
+        (next_frame_shots + after_next_frame_shots).slice(0, size)
       end
     end
   end
