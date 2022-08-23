@@ -29,10 +29,17 @@ module Bowling
       private
 
       def create_transfer(first_value, second_value)
-        frame_type_class = Frame.registry.find_with_policy(first_value, second_value)
+        frame_type_class = find_with_policy(first_value, second_value)
         position = @transfers.size + 1
 
         Transfer.new(frame_type_class, position)
+      end
+
+      def find_with_policy(first_value, second_value)
+        return StrikeType if StrikeType.comply_with?(first_value)
+        return SpareType if SpareType.comply_with?(first_value, second_value)
+
+        NormalType
       end
     end
   end

@@ -1,20 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'registry'
-
 module Bowling
   module Frame
-    def self.registry
-      Registry.instance
-    end
-
     class AbstractType
       attr_reader :shots, :next_frame
-
-      def self.inherited(subclass)
-        super
-        Frame.registry.register_type(subclass)
-      end
 
       def self.comply_with?(first_value, second_value)
         raise NotImplementedError
