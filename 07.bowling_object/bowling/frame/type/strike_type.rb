@@ -5,10 +5,6 @@ require_relative 'abstract_type'
 module Bowling
   module Frame
     class StrikeType < AbstractType
-      def self.comply_with?(first_value)
-        first_value.strike?
-      end
-
       private
 
       def bonus_point

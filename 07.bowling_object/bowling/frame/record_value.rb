@@ -14,6 +14,10 @@ module Bowling
         @str == STRIKE_MARK
       end
 
+      def +(other)
+        to_i +  other.to_i
+      end
+
       def to_i
         return STRIKE_HIT_COUNT if strike?
 

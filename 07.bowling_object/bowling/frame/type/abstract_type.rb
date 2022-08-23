@@ -5,10 +5,6 @@ module Bowling
     class AbstractType
       attr_reader :shots, :next_frame
 
-      def self.comply_with?(first_value, second_value)
-        raise NotImplementedError
-      end
-
       def initialize(shots, next_frame = nil)
         @shots = shots
         @next_frame = next_frame
