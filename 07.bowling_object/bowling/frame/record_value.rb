@@ -15,7 +15,7 @@ module Bowling
       end
 
       def +(other)
-        to_i +  other.to_i
+        to_i + other.to_i
       end
 
       def to_i
