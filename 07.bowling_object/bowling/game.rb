@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'frame'
+require_relative 'shot'
 
 module Bowling
   class Game
@@ -8,13 +9,13 @@ module Bowling
 
     def initialize(records)
       @frames = []
-      @values = records.map { |str| RecordValue.new(str) }
+      @shots = records.map { |value| Shot.new(value) }
 
-      @values.each.with_index do |current_value, current_value_index|
-        next if current_value.used?
+      @shots.each.with_index do |shot, i|
+        next if shot.used?
 
-        shots = find_shots(current_value, current_value_index)
-        bonus_point_shots = find_bonus_point_shots(current_value, current_value_index)
+        shots = find_frame_shots(shot, i)
+        bonus_point_shots = find_bonus_point_shots(shot, i)
 
         @frames << Frame.new(shots, bonus_point_shots)
 
@@ -28,27 +29,27 @@ module Bowling
 
     private
 
-    def find_shots(current_value, current_value_index)
-      slice_shot_size = max_shot_size(current_value)
-      @values.slice(current_value_index, slice_shot_size).compact
+    def find_frame_shots(first_shot, first_shot_index)
+      slice_shot_size = max_frame_shot_size(first_shot)
+      @shots.slice(first_shot_index, slice_shot_size).compact
     end
 
-    def max_shot_size(current_value)
+    def max_frame_shot_size(first_shot)
       return 3 if final_frame?
 
-      current_value.strike? ? 1 : 2
+      first_shot.strike? ? 1 : 2
     end
 
-    def find_bonus_point_shots(current_value, current_value_index)
+    def find_bonus_point_shots(first_shot, first_shot_index)
       return [] if final_frame?
 
-      next_value_index = current_value_index + 1
-      next_value = @values[current_value_index + 1]
+      second_shot_index = first_shot_index + 1
+      second_shot = @shots[second_shot_index]
 
-      if current_value.strike?
-        @values.slice(next_value_index, 2).compact
-      elsif current_value.spare?(next_value)
-        @values.slice(next_value_index + 1, 1).compact
+      if first_shot.strike?
+        @shots.slice(second_shot_index, 2).compact
+      elsif first_shot.spare?(second_shot)
+        @shots.slice(second_shot_index + 1, 1).compact
       else
         []
       end

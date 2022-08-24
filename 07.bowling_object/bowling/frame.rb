@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'record_value'
-
 module Bowling
   class Frame
     def initialize(shots, bonus_point_shots)

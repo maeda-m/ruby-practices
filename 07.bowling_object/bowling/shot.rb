@@ -1,22 +1,21 @@
 # frozen_string_literal: true
 
 module Bowling
-  class RecordValue
+  class Shot
     STRIKE_MARK = 'X'
     MAX_HIT_COUNT = 10
 
-    def initialize(str)
-      @str = str
+    def initialize(value)
+      @value = value
       @used = false
     end
 
     def strike?
-      @str == STRIKE_MARK
+      @value == STRIKE_MARK
     end
 
     def spare?(other)
       return false if strike?
-      return false if other.strike?
 
       self + other == MAX_HIT_COUNT
     end
@@ -28,7 +27,7 @@ module Bowling
     def to_i
       return MAX_HIT_COUNT if strike?
 
-      @str.to_i
+      @value.to_i
     end
 
     def used?
