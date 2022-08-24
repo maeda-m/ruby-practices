@@ -31,7 +31,7 @@ module Bowling
 
     def find_frame_shots(first_shot, first_shot_index)
       slice_shot_size = max_frame_shot_size(first_shot)
-      @shots.slice(first_shot_index, slice_shot_size).compact
+      @shots.slice(first_shot_index, slice_shot_size)
     end
 
     def max_frame_shot_size(first_shot)
@@ -47,9 +47,9 @@ module Bowling
       second_shot = @shots[second_shot_index]
 
       if first_shot.strike?
-        @shots.slice(second_shot_index, 2).compact
+        @shots.slice(second_shot_index, 2)
       elsif first_shot.spare?(second_shot)
-        @shots.slice(second_shot_index + 1, 1).compact
+        @shots.slice(second_shot_index + 1, 1)
       else
         []
       end
