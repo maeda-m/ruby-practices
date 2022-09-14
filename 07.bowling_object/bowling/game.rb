@@ -8,7 +8,7 @@ module Bowling
     MAX_FRAME_SIZE = 10
 
     def initialize(records)
-      @frames = (1..MAX_FRAME_SIZE).to_a.map { |i| Frame.new(final_frame?(i)) }
+      @frames = (1..MAX_FRAME_SIZE).to_a.map { |i| Frame.new(i) }
 
       @shots = records.map { |record| Shot.new(record) }
       @shots.each do |shot|
@@ -22,10 +22,6 @@ module Bowling
     end
 
     private
-
-    def final_frame?(position)
-      position == MAX_FRAME_SIZE
-    end
 
     def bonus_point_shots(frame)
       return [] if frame.final_frame?

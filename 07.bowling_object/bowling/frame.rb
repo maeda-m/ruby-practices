@@ -3,12 +3,13 @@
 module Bowling
   class Frame
     MAX_HIT_COUNT = 10
+    FINAL_FRAME_POSITION = 10
 
     attr_reader :shots
 
-    def initialize(final_frame)
+    def initialize(position)
       @shots = []
-      @final_frame = final_frame
+      @position = position
     end
 
     def hit_count
@@ -45,7 +46,7 @@ module Bowling
     end
 
     def final_frame?
-      @final_frame
+      @position == FINAL_FRAME_POSITION
     end
   end
 end
