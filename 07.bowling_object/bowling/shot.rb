@@ -3,39 +3,27 @@
 module Bowling
   class Shot
     STRIKE_MARK = 'X'
-    MAX_HIT_COUNT = 10
+    STRIKE_HIT_COUNT = 10
 
-    def initialize(value)
-      @value = value
-      @used = false
+    def initialize(str)
+      @str = str
     end
 
-    def strike?
-      @value == STRIKE_MARK
+    # See: https://docs.ruby-lang.org/ja/latest/method/Numeric/i/coerce.html
+    def coerce(other)
+      [other, to_i]
     end
 
-    def spare?(other)
-      return false if strike?
+    def ==(other)
+      return to_i == other if other.is_a?(Integer)
 
-      self + other == MAX_HIT_COUNT
-    end
-
-    def +(other)
-      to_i + other.to_i
+      super
     end
 
     def to_i
-      return MAX_HIT_COUNT if strike?
+      return STRIKE_HIT_COUNT if @str == STRIKE_MARK
 
-      @value.to_i
-    end
-
-    def used?
-      @used
-    end
-
-    def used!
-      @used = true
+      @str.to_i
     end
   end
 end
